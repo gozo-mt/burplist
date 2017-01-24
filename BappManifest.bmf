@@ -1,0 +1,10 @@
+Uuid: 21df56baa03d499c8439018fe075d3d7
+ExtensionType: 2
+Name: Wordlist Extractor
+ScreenVersion: 1.0
+SerialVersion: 0
+MinPlatformVersion: 0
+ProOnly: False
+Author: Patrick Grech
+ShortDescription: Scrapes all unique words and numbers for use with password cracking
+EntryPoint: burpList.py
