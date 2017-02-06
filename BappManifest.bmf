@@ -2,7 +2,7 @@ Uuid: 21df56baa03d499c8439018fe075d3d7
 ExtensionType: 2
 Name: Wordlist Extractor
 ScreenVersion: 1.0
-SerialVersion: 0
+SerialVersion: 1
 MinPlatformVersion: 0
 ProOnly: False
 Author: Patrick Grech
