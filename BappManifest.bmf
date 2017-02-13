@@ -1,6 +1,7 @@
 Uuid: 21df56baa03d499c8439018fe075d3d7
 ExtensionType: 2
 Name: Wordlist Extractor
+RepoName: wordlist-extractor
 ScreenVersion: 1.0
 SerialVersion: 1
 MinPlatformVersion: 0
