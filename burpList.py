@@ -81,24 +81,40 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,JFrame):
     def wordlistCreate(self,event):
         #gathers information from the context menu, can be perused through with getResponse()
         http_traffic = self.context.getSelectedMessages()
-        #empty the list so concurrent lists don't get mixed up
-        self.wordlist = []
-        hosts = ''
-        #thanks BHP
-        for traffic in http_traffic:
-            http_service = traffic.getHttpService()
-            hosts = http_service.getHost()
-            #gathers all responses from the traffic
-            http_response = traffic.getResponse()
 
-            if http_response:
-                words = self.handleTraffic(http_response)
-                #add a list to the wordlist
-                self.wordlist.extend(words)
-            else:
-                continue
-        #after all words have been added, write to file
-        self.filewrite(hosts)
+
+        self.wordlist = []
+	words = [] 
+	host = ''
+	#thanks BHP
+	for traffic in http_traffic:
+	    http_service = traffic.getHttpService()
+            host = http_service.getHost()
+	    print "Host is "+host+"\n"
+	    # when called from the Site Map (they only way I want to use it)
+	    # getSelectedMessages() returns nothing
+	    # we need go get all selected messages from the host the scope by calling getSiteMap() instead
+	    if self.context.getInvocationContext() == self.context.CONTEXT_TARGET_SITE_MAP_TREE or self.context.getInvocationContext() == self.context.CONTEXT_TARGET_SITE_MAP_TABLE:
+	        print "Called from the Site Map, which means we are about to process ALL the messages from it. It might take a while!\n"
+		http_sitemap_traffic = 	self._callbacks.getSiteMap(http_service.getProtocol()+"://"+http_service.getHost())		
+		i=0
+		for straffic in http_sitemap_traffic:
+			http_response = straffic.getResponse()
+
+			if http_response != None:
+				words = self.handleTraffic(http_response)
+				i=i+1
+				self.wordlist.extend(words)
+			print "Processed "+str(i)+" requests"
+	    else:
+        	http_response = traffic.getResponse()
+        	if http_response:
+        	    words = self.handleTraffic(http_response)
+        	    #add a list to the wordlist
+        	    self.wordlist.extend(words)
+        	#after all words have been added, write to file
+
+       	self.filewrite(host)
 
     def handleTraffic(self,http_response):
         print '#######################################Creating Wordlist...###############################################'
@@ -191,7 +207,7 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,JFrame):
         return numbers
 
     def addtolist(self,value,wList,bad_chars):
-        # bad_chars instantiated further up, essentially a list of special chars apart from '
+        # bad_chars instantiated further up, essentially a list of special chars apart from '	
         stripchars = re.sub(r'['+bad_chars+']', '', value)
         #strip numbers from value, nums already found.
         value = re.sub('[0-9]', '', stripchars)
@@ -245,5 +261,5 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,JFrame):
                         pass
                     else:
                         f.write(word +'\n')
-            print 'Wordlist created at '+filepath
+            print 'Wordlist created at: '+filepath
             print '##########################################################################################################\n'
